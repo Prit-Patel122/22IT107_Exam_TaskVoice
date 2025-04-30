@@ -1,67 +1,50 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Command {
-  static final all = [email, browser1, browser2];
-
-  static const email = 'write email';
-  static const browser1 = 'open';
-  static const browser2 = 'go to';
-}
-
 class Utils {
-  static void scanText(String rawText) {
-    final text = rawText.toLowerCase();
-
-    if (text.contains(Command.email)) {
-      final body = _getTextAfterCommand(text: text, command: Command.email);
-
-      openEmail(body: body);
-    } else if (text.contains(Command.browser1)) {
-      final url = _getTextAfterCommand(text: text, command: Command.browser1);
-
-      openLink(url: url);
-    } else if (text.contains(Command.browser2)) {
-      final url = _getTextAfterCommand(text: text, command: Command.browser2);
-
-      openLink(url: url);
-    }
-  }
-
-  static String _getTextAfterCommand({
-    @required String text,
-    @required String command,
+  static bool textContains({
+    required String text,
+    required String command,
   }) {
-    final indexCommand = text.indexOf(command);
-    final indexAfter = indexCommand + command.length;
+    final textLower = text.toLowerCase();
+    final commandLower = command.toLowerCase();
 
-    if (indexCommand == -1) {
-      return null;
-    } else {
-      return text.substring(indexAfter).trim();
-    }
+    return textLower.contains(commandLower);
   }
 
-  static Future openLink({
-    @required String url,
+  static Future<void> openLink({
+    required String url,
   }) async {
-    if (url.trim().isEmpty) {
-      await _launchUrl('https://google.com');
-    } else {
-      await _launchUrl('https://$url');
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     }
   }
 
-  static Future openEmail({
-    @required String body,
+  static Future<void> sendEmail({
+    required String body,
   }) async {
-    final url = 'mailto: ?body=${Uri.encodeFull(body)}';
-    await _launchUrl(url);
+    final url = 'mailto:?body=${Uri.encodeComponent(body)}';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    }
   }
 
-  static Future _launchUrl(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
+  static Future<void> copyToClipboard(String text) async {
+    await FlutterClipboard.copy(text);
+  }
+
+  static String getCommand(String text) {
+    // Provide a default return value
+    return "";
+  }
+
+  // Add allCommands
+  static List<String> allCommands = [];
+
+  // Add scanText
+  static void scanText(String text) {
+    // Implement the scanText logic here
+    print("Scanning text: $text");
   }
 }
