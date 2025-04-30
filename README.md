@@ -44,5 +44,5 @@ The app features **on-device speech recognition**, **Text-to-Speech (TTS) feedba
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/taskvoice.git
+   git clone https://github.com/Prit-Patel122/22IT107_Exam_TaskVoice.git
    cd taskvoice
